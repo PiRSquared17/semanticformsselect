@@ -1,4 +1,7 @@
 <?php
+if( !defined( 'MEDIAWIKI' ) ) {
+	die("This file is an extension to the MediaWiki software and cannot be used standalone.\n");
+}
  $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'specialpage'][] = array(
        'path' => __FILE__,
        'name' => 'SemanticFormsSelect',
@@ -21,10 +24,6 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) )
 		 'scripts' => array( 'extensions/SemanticFormsSelect/scriptSelect.js' ),
 		 'dependencies' => array('ext.semanticforms.main')
 	);
-	$wgResourceModules['ext.sf_select.ajaxselect'] = array(
-		 'scripts' => array( 'extensions/SemanticFormsSelect/ajaxselect.js' ),
-		 'dependencies' => array('jquery')
-	);	
 }
 
 
