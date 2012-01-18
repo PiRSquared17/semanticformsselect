@@ -54,7 +54,7 @@ function QueryExecution($query)
 	$values=array_map("trim", $values);
 	$values=array_unique($values);
 	sort($values);
-
+	array_unshift($values, "");
 	$ret=array( "values"=>$values);
 	$json= json_encode($ret);
 	return $json;
@@ -75,6 +75,7 @@ function FunctionExecution($f)
 	$values=array_map("trim", $values);
 	$values=array_unique($values);
 	sort($values);
+	array_unshift($values, "");
 	$ret=array("values"=>$values);
 	return json_encode($ret);
 }
