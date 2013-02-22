@@ -8,7 +8,7 @@ if( !defined( 'MEDIAWIKI' ) ) {
        'author' =>array( '[http://www.mediawiki.org/wiki/User:Jasonzhang Jasonzhang]'),
        'url' => 'https://www.mediawiki.org/wiki/Extension:SemanticFormsSelect', 
        'description' => 'Generate a select field in Semantic Form which values are from query',
-       'version'  => 1.0,
+       'version'  => 1.1,
        );
 $wgAjaxExportList[] = "QueryExecution";
 $wgAjaxExportList[] = "FunctionExecution";
@@ -18,10 +18,14 @@ $wgSF_SelectDir = dirname(__FILE__) ;
 $wgSF_SelectScriptPath  = $wgScriptPath . '/extensions/'.basename($wgSF_SelectDir);
 $wgScriptSelectCount=0;
 
+$wgSF_Select_debug=0;
+
 if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) 
 {
 	$wgResourceModules['ext.sf_select.scriptselect'] = array(
-		 'scripts' => array( 'extensions/SemanticFormsSelect/scriptSelect.js' ),
+		'localBasePath' => $wgSF_SelectDir,
+		'remoteExtPath' => 'SemanticFormsSelect',
+		 'scripts' => array( 'scriptSelect.js' ),
 		 'dependencies' => array('ext.semanticforms.main')
 	);
 }
@@ -34,19 +38,25 @@ function SFSelect_formSetup() {
 
 function QueryExecution($query)
 {
-	global $wgParser;
+	/*@var wgParser Parser */
+	global $wgParser, $wgSF_Select_debug;
 	
 	//wfDebugLog("EPA","query: ".$query);
 	$query=str_replace("&lt;", "<", $query);
 	$query=str_replace("&gt;", ">", $query);
 	$params=explode(";", $query);
-	
-	$wgParser->firstCallInit();
+
 	$wgParser->setTitle(Title::newFromText( 'NO TITLE' ));
 	$wgParser->mOptions=new ParserOptions();
+	$wgParser->firstCallInit();
+
 	
 	$f=str_replace(";", "|", $params[0]);
 	$params[0]=$wgParser->replaceVariables($f);
+	if ($wgSF_Select_debug)
+	{
+		error_log(implode("|", $params));
+	}
 	
 	$result=SMWQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
 
@@ -63,13 +73,17 @@ function QueryExecution($query)
 
 function FunctionExecution($f)
 {
-	global $wgParser;
+	global $wgParser, $wgSF_Select_debug;
 	
 	$wgParser->firstCallInit();
 	$wgParser->setTitle(Title::newFromText( 'NO TITLE' ));
 	$wgParser->mOptions=new ParserOptions();
 	
 	$f=str_replace(";", "|", $f);
+	if ($wgSF_Select_debug)
+	{
+		error_log($f);
+	}
 	$values=$wgParser->replaceVariables($f);
 	$values=explode(",", $values);
 	$values=array_map("trim", $values);
@@ -86,7 +100,6 @@ function FunctionExecution($f)
 function SF_Select ($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args)
 {
 	global $wgOut, $wgScriptPath,$wgSF_SelectDir, $wgScriptSelectCount, $sfgFieldNum, $wgUser, $wgParser,$wgSF_SelectScriptPath;
-	error_log("sf_select is called");
 	$selectField=array();
 	$values=null;
 	$staticvalue=false;
