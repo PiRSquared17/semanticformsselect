@@ -1,0 +1,3 @@
+This extension generates a select form element which option values are from semantic query or parser function. This extension is an extension for [SemanticForms](http://www.mediawiki.org/wiki/Extension:Semantic_Forms). For information, please go to [SemanticFormsSelect](http://www.mediawiki.org/wiki/Extension:SemanticFormsSelect)
+
+Please checkout the professional ready-to-use software to manage Semantic data:http://www.flexdms.com
